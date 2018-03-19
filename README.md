@@ -9,6 +9,7 @@ Another test project. Using [hyperandroid/Automata](https://github.com/hyperandr
 
 To test:
 ```
+tsc
 npm install
 npm run watch
 ```
