@@ -1,0 +1,22 @@
+{
+  "name": "automataTest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./dist/index.js",
+    "watch": "nodemon --exec ts-node -- src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "automata": "^3.0.4",
+    "ws": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^9.4.7",
+    "@types/websocket": "0.0.38",
+    "@types/ws": "^4.0.1"
+  }
+}

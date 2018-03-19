@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TEST ENV</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+
+<body>
+    <div id="app" class="container">
+        <br/>
+        <div class="col s10 offset-s1 center-align">
+            <button v-on:click="addUser" class="btn btn-floating pulse ">+</button>
+            <button v-on:click="reset" class="btn btn-floating pulse red">Reset</button>
+            <div v-if="gameFinished"> Game finished </div>
+            <div v-for="user, index in users" class="card-panel light-green lighten-4">
+                <div class="grey-text text-darken-2">
+                    User {{ index + 1 }}.
+                    <div v-if="user.myTurn">
+                        <input :disabled="!user.myTurn" v-model="user.answer" type="text" placeholder="Your choice" class="center-align orange-text orange-darken-4"
+                        />
+                        <button v-on:click="user.choose(user)" class="btn btn-floating pulse yellow darken-1 deep-orange-text text-darken-4">OK</button>
+                        <b class="center-align deep-orange-text text-darken-4">Your turn!!!</b>
+                    </div>
+                    <div v-if="!user.myTurn && !gameFinished">
+                        <b class="center-align deep-purple-text text-lighten-2">Wait for your turn!</b>
+                    </div>
+                    <div v-if="user.result === true" class="orange-text text-darken-4">
+                        YOU'VE WON!!
+                    </div>
+                    <div v-if="user.result === false" class="teal-text text-darken-3">
+                        YOU'VE LOST!!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                gameStarted: false,
+                gameFinished: false,
+                users: []
+            },
+            methods: {
+                addUser: function () {
+                    if (this.users.length == 6) return;
+                    let newUser = {
+                        userId: 0,
+                        myTurn: false,
+                        inGame: false,
+                        result: undefined,
+                        ws: undefined,
+                        answer: '',
+                        choose: function (self) {
+                            if (self.myTurn) {
+                                self.ws.send(JSON.stringify({ userId: self.userId, messageType: 'choose', message: self.answer }));
+                            }
+                        },
+                        subscribe: function (message) {
+                            var model = JSON.parse(message.data);
+                            console.log(this);
+                            if (!model || !model.messageType) return;
+                            switch (model.messageType) {
+                                case "accepted":
+                                    this.inGame = true;
+                                    this.userId = model.userId;
+                                    break;
+                                case "finish":
+                                    vm.gameFinished = true;
+                                    this.myTurn = false;
+                                    this.result = model.userId.toString() == this.userId.toString()
+                                    break;
+                                case "yourturn":
+                                    this.myTurn = true;
+                                    break;
+                                case "offturn":
+                                    this.myTurn = false;
+                                    break;
+                                case "start":
+                                    vm.gameStarted = true;
+                                    break;
+                                case "reset":
+                                    vm.reset();
+                                    break;
+                            }
+                        },
+                        connect: function () {
+                            this.ws = new WebSocket('ws://localhost:3000');
+                            this.ws.onmessage = (m) => this.subscribe(m);
+                        }
+                    };
+                    this.users.push(newUser);
+                    newUser.connect();
+                },
+                reset: function () {
+                    this.gameStarted = false;
+                    for (user in this.users) {
+                        this.users[user].ws.send(JSON.stringify({ userId: this.users[user].userId, messageType: 'close', message: "I'm off..." }));
+                    }
+                    this.users = [];
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

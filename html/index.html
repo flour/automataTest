@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Automata Game</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+
+<body>
+    <div id="app" class="container">
+        <div class="col s10 offset-s1">
+            <div>
+                <div v-if="userInfo.connected" class="card-panel green darken-3">
+                    <h4 class="center-align grey-text text-lighten-5"> You are connected!! </h4>
+                </div>
+                <div v-if="userInfo.inGame" class="card-panel yellow lighten-2 center-align">
+                    <h5> You are in game. Get ready!</h5>
+                </div>
+                <div v-if="userInfo.myTurn" class="center-align">
+                    <h6> Your turn!!! Make decision quickly!!</h6>
+                    <button class="btn btn-floating pulse">GO!</button>
+                </div>
+            </div>
+
+            <div v-if="!userInfo.connected" class="card-panel red lighten-2">
+                <h4 class="center-align grey-text text-lighten-5"> You are not connected!! </h4>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                gameStarted: false,
+                gameFinished: false,
+                userInfo: {
+                    id: -1,
+                    connected: false,
+                    inGame: false,
+                    turnNumber: 0,
+                    myTurn: false,
+                    answer: null,
+                    result: false
+                }
+            },
+            methods: {
+                makeDecision: function () {
+
+                }
+            }
+        });
+
+        var socket = new WebSocket('ws://localhost:3000');
+        socket.onmessage = function (message) {
+            var model = JSON.parse(message.data);
+            if (!model || !model.messageType) return;
+            switch (model.messageType) {
+                case "accepted":
+                    vm.userInfo.inGame = true;
+                    vm.userInfo.id = model.userId;
+                    break;
+                case "finish":
+                    vm.gameFinished = true;
+                    vm.userInfo.result = model.userId.toString() == vm.userInfo.id.toString()
+                    break;
+                case "yourturn":
+                    vm.userInfo.myTurn = true;
+                    break;
+                case "offturn":
+                    vm.userInfo.myTurn = false;
+                    break;
+                case "start":
+                    vm.gameStarted = true;
+                    break;
+                case "reset":
+                    break;
+            }
+        };
+        socket.onopen = function () {
+            vm.userInfo.connected = true;
+            socket.send(JSON.stringify({ name: 'qwe', message: "test" }));
+        }
+
+    </script>
+</body>
+
+</html>
