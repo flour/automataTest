@@ -2,7 +2,7 @@
 
 import EventHandler from './eventListener';
 import { Automata, Message, Session } from "automata";
-const timeout = 100000;
+const timeout = 5000;
 
 Automata.RegisterFSM({
     name: "AutomataGame",

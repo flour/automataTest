@@ -113,7 +113,7 @@ export default class GameServer {
     }
 
     startGame() {
-        this.currentValue = this.getRandomInt(0, 10);
+        this.currentValue = this.getRandomInt(1, 10);
         console.log('Game started. number is: ' + this.currentValue);
         this.broadcast(JSON.stringify({ messageType: "start", message: "Game started" }));
         this.currentGame = new Game();
@@ -136,7 +136,7 @@ export default class GameServer {
         if (this.currentPlayer) {
             this.sendTo(this.currentPlayer.ws, JSON.stringify({ messageType: 'finish', message: 'Timeout', userId: -1 }));
         }
-        let pIndex = 0// this.getRandomInt(1, this.allowedClients.length);
+        let pIndex = this.getRandomInt(1, this.allowedClients.length);
         this.currentPlayer = this.allowedClients[pIndex];
         if (this.currentPlayer) {
             this.allowedClients.splice(pIndex, 1);
