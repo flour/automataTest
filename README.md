@@ -1,6 +1,6 @@
 # automataTest
 
-Another test project. Using (hyperandroid/Automata)[https://github.com/hyperandroid/Automata] to imulate some kinda quiz game.
+Another test project. Using (hyperandroid.Automata)[https://github.com/hyperandroid/Automata] to imulate some kinda quiz game.
 - Service waits for six users to be connected. then it generates som random number from 1 to 10 - the correct answer. 
 - Server picks one random user and offers him to choose correct number.
 - Server waits 5 seconds user to make a decission.
@@ -14,5 +14,5 @@ npm run watch
 ```
 and open 
 ```
-[html/test.html](https://github.com/flour/automataTest/blob/master/html/test.html)
+[test.html](https://github.com/flour/automataTest/blob/master/html/test.html)
 ```
