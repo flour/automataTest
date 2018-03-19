@@ -108,6 +108,7 @@ export default class GameServer {
             this.broadcast(msg);
             this.currentGame.FinishSession();
         } else {
+            this.sendTo(this.currentPlayer.ws, JSON.stringify({ messageType: 'finish', message: 'Timeout', userId: -1 }));
             this.currentGame.NextStep();
         }
     }
@@ -136,11 +137,12 @@ export default class GameServer {
         if (this.currentPlayer) {
             this.sendTo(this.currentPlayer.ws, JSON.stringify({ messageType: 'finish', message: 'Timeout', userId: -1 }));
         }
-        let pIndex = this.getRandomInt(1, this.allowedClients.length);
+        let pIndex = this.getRandomInt(0, this.allowedClients.length - 1);
         this.currentPlayer = this.allowedClients[pIndex];
         if (this.currentPlayer) {
+            console.log('Current user: ' + this.currentPlayer.userId);
             this.allowedClients.splice(pIndex, 1);
-            this.sendTo(this.currentPlayer.ws, JSON.stringify({ messageType: 'yourturn', message: 'It is time to choose' }));
+            this.sendTo(this.currentPlayer.ws, JSON.stringify({ messageType: 'yourturn', userId: this.currentPlayer.userId, message: 'It is time to choose' }));
         }
     }
 

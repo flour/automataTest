@@ -16,12 +16,18 @@
     <div id="app" class="container">
         <br/>
         <div class="col s10 offset-s1 center-align">
-            <button v-on:click="addUser" class="btn btn-floating pulse ">+</button>
-            <button v-on:click="reset" class="btn btn-floating pulse red">Reset</button>
+            <div class="row">
+                <div class="col s2 offset-s4 center-align">
+                    <button v-on:click="addUser" class="btn btn-floating btn-large pulse ">+</button>
+                </div>
+                <div class="col s2 center-align">
+                    <button v-on:click="reset" class="btn btn-floating btn-large pulse red">Reset</button>
+                </div>
+            </div>
             <div v-if="gameFinished"> Game finished </div>
             <div v-for="user, index in users" class="card-panel light-green lighten-4">
                 <div class="grey-text text-darken-2">
-                    User {{ index + 1 }}.
+                    User #{{ user.userId }}
                     <div v-if="user.myTurn">
                         <input :disabled="!user.myTurn" v-model="user.answer" type="text" placeholder="Your choice" class="center-align orange-text orange-darken-4"
                         />
