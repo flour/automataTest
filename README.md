@@ -9,9 +9,9 @@ Another test project. Using [hyperandroid/Automata](https://github.com/hyperandr
 
 To test:
 ```
-tsc
 npm install
-npm run watch
+tsc
+npm run start
 ```
 and open 
 [html/test.html](https://github.com/flour/automataTest/blob/master/html/test.html)
